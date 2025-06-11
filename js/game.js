@@ -39,24 +39,27 @@ export class Game {
         this.generatePlayerForms();
     }
 
+    // --- PERBAIKAN UTAMA ADA DI FUNGSI INI ---
     generatePlayerForms() {
         const count = parseInt(this.playerCountInput.value, 10);
         this.playerFormsContainer.innerHTML = '';
 
+        // 1. Buat daftar pilihan (<option>) secara dinamis dari CHARACTER_CLASSES
         let classOptionsHTML = '';
         for (const classKey in CHARACTER_CLASSES) {
             classOptionsHTML += `<option value="${classKey}">${CHARACTER_CLASSES[classKey].name}</option>`;
         }
 
+        // 2. Buat form untuk setiap pemain dan masukkan daftar pilihan dinamis tadi
         for (let i = 0; i < count; i++) {
-            const defaultClass = 'knight';
+            const defaultClass = 'fighter';
             const formHTML = `
                 <div class="player-form">
                     <img id="class-icon-${i}" class="class-icon" src="${CHARACTER_CLASSES[defaultClass].icon}" alt="Class Icon">
                     <strong>Pemain ${i + 1}:</strong>
-                    <input type="text" id="player-name-${i}" placeholder="Insert Your Name">
+                    <input type="text" id="player-name-${i}" placeholder="Masukkan Nama">
                     <select id="player-class-${i}">
-                        ${classOptionsHTML} 
+                        ${classOptionsHTML}
                     </select>
                 </div>
             `;
@@ -146,7 +149,7 @@ export class Game {
         const steps = Math.floor(Math.random() * 6) + 1;
         this.ui.updateDiceDisplay(steps);
         const currentPlayer = this.getCurrentPlayer();
-        this.ui.addLog(`${currentPlayer.name} Rolled A: ${steps}.`);
+        this.ui.addLog(`${currentPlayer.name} rolled a: ${steps}.`);
         this.movePlayer(currentPlayer, steps);
     }
     
@@ -154,7 +157,7 @@ export class Game {
         player.move(steps);
         if (player.position >= this.tilePath.length) {
             player.position %= this.tilePath.length;
-            this.ui.addLog(`${player.name} Passed The Start!`);
+            this.ui.addLog(`${player.name} passed the start!`);
         }
         this.updatePlayerPosition(player);
         this.checkTileEvent(player);
