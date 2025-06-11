@@ -1,0 +1,70 @@
+* { box-sizing: border-box; }
+
+body {
+    background-color: #ffffff;
+    background-image: 
+        radial-gradient(circle at center, #d7d7d7 1px, transparent 1px),
+        radial-gradient(circle at center, #d7d7d7 1px, #ffffff 1px);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+    font-family: 'VT323', monospace;
+    color: #3f517e;
+    margin: 0;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.game-wrapper { width: 100%; max-width: 1400px; display: flex; flex-direction: column; height: 95vh; }
+.top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
+.game-title { font-size: 2.8rem; margin: 0; }
+.btn { background-color: transparent; border: 3px solid #6c8cff; color: #3f517e; padding: 8px 18px; border-radius: 12px; font-family: 'VT323', monospace; font-size: 1.4rem; cursor: pointer; transition: all 0.2s ease; }
+.btn:hover { background-color: #6c8cff; color: #fff; }
+
+#game-setup { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+#game-setup h2 { font-size: 2rem; margin-bottom: 25px; }
+.setup-section { margin-bottom: 20px; font-size: 1.5rem; }
+.setup-section input { font-family: 'VT323', monospace; font-size: 1.5rem; width: 80px; padding: 5px; border: 2px solid #ccc; border-radius: 5px; text-align: center; }
+#player-creation-forms { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; margin-top: 20px; }
+.player-form { border: 4px solid #6c8cff; border-radius: 20px; padding: 20px; width: 260px; background-color: rgba(255, 255, 255, 0.8); display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.player-form strong { font-size: 1.5rem; }
+.player-form input, .player-form select { font-family: 'VT323', monospace; font-size: 1.2rem; padding: 8px; width: 100%; border: 2px solid #ccc; border-radius: 8px; }
+.class-icon { width: 80px; height: 80px; border-radius: 8px; background-color: #e0e0e0; border: 2px solid #ccc; object-fit: cover; }
+#start-game-btn { font-size: 1.6rem; padding: 12px 30px; margin-top: 25px; background-color: #76b852; border-color: #5a9a3a; color: #fff; }
+#start-game-btn:hover { background-color: #5a9a3a; }
+.bottom-bar { text-align: center; padding: 10px 0; font-size: 1.2rem; }
+.fa-heart { color: #ff6b6b; }
+
+#game-container { display: none; flex-grow: 1; justify-content: space-between; align-items: stretch; gap: 20px; }
+.side-panel { width: 220px; display: flex; flex-direction: column; gap: 20px; }
+.player-card { border: 3px solid #6c8cff; border-radius: 15px; padding: 15px; background-color: #fff; transition: all 0.3s ease; }
+.player-card.active { box-shadow: 0 0 15px #6c8cff; transform: scale(1.02); }
+.player-card h3 { margin: 0 0 10px 0; font-size: 1.5rem; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+.player-card p { margin: 0 0 5px 0; font-size: 1.2rem; }
+#center-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; }
+#game-board { display: grid; width: 640px; height: 640px; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); gap: 5px; }
+.tile { border: 2px solid #9fb5ff; border-radius: 5px; display: flex; justify-content: center; align-items: center; background-color: #eef2ff; font-size: 1.2rem; }
+.tile:nth-child(even){ background-color: #dbe2ff; }
+#center-panel { grid-column: 3 / 7; grid-row: 3 / 7; background: linear-gradient(45deg, #ffc107, #f76c6c); border-radius: 15px; display: flex; flex-direction: column; justify-content: space-around; align-items: center; padding: 20px; }
+#game-log-container { width: 100%; height: 120px; background-color: rgba(0,0,0,0.2); border-radius: 10px; padding: 10px; }
+#game-log { width: 100%; height: 100%; overflow-y: auto; color: #fff; font-size: 1.2rem; text-shadow: 1px 1px 1px #000; }
+#game-log p { margin: 0 0 5px 0; }
+#dice-display { width: 100px; height: 100px; background-color: #fff; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-size: 4rem; color: #333; box-shadow: inset 0 0 10px rgba(0,0,0,0.3); }
+#roll-dice-btn { width: 80%; }
+.player-pawn { width: 40px; height: 40px; position: absolute; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 10px #000; transition: all 0.5s ease; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; color: #fff; text-shadow: 1px 1px 2px #000; }
+
+@media (max-width: 1200px) {
+    #game-container { flex-direction: column; align-items: center; }
+    .side-panel { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; height: auto; }
+    .player-card { width: 220px; }
+}
+@media (max-width: 768px) {
+    .game-wrapper { height: auto; min-height: 100vh; }
+    .top-bar { flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .game-title { font-size: 2rem; order: -1; }
+    .btn { font-size: 1.1rem; padding: 6px 14px; }
+    #game-board { width: 90vw; height: 90vw; }
+    #dice-display { width: 80px; height: 80px; font-size: 3rem; }
+}
