@@ -1,6 +1,7 @@
 import { Player } from './player.js';
 import { UI } from './ui.js';
 
+// Data lengkap untuk 8 kelas karakter
 const CHARACTER_CLASSES = {
     fighter: { name: "Knight", hp: 120, attack: 15, color: '#e53935', icon: 'images/fighter.png' },
     mage: { name: "Mage", hp: 80, attack: 20, color: '#1e88e5', icon: 'images/mage.png' },
@@ -13,6 +14,7 @@ const CHARACTER_CLASSES = {
 };
 
 export class Game {
+    // Jalur papan permainan melingkar dengan 28 petak
     tilePath = [
         0, 1, 2, 3, 4, 5, 6, 7, 
         15, 23, 31, 39, 47, 55, 
@@ -39,25 +41,33 @@ export class Game {
         this.generatePlayerForms();
     }
 
-    // --- PERBAIKAN UTAMA ADA DI FUNGSI INI ---
     generatePlayerForms() {
-        const count = parseInt(this.playerCountInput.value, 10);
+        let count = parseInt(this.playerCountInput.value, 10);
+
+        // Validasi untuk batas pemain (1-8)
+        if (count > 8) {
+            count = 8;
+            this.playerCountInput.value = 8;
+        }
+        if (count < 1 || isNaN(count)) {
+            count = 1;
+            this.playerCountInput.value = 1;
+        }
+
         this.playerFormsContainer.innerHTML = '';
 
-        // 1. Buat daftar pilihan (<option>) secara dinamis dari CHARACTER_CLASSES
         let classOptionsHTML = '';
         for (const classKey in CHARACTER_CLASSES) {
             classOptionsHTML += `<option value="${classKey}">${CHARACTER_CLASSES[classKey].name}</option>`;
         }
 
-        // 2. Buat form untuk setiap pemain dan masukkan daftar pilihan dinamis tadi
         for (let i = 0; i < count; i++) {
             const defaultClass = 'fighter';
             const formHTML = `
                 <div class="player-form">
                     <img id="class-icon-${i}" class="class-icon" src="${CHARACTER_CLASSES[defaultClass].icon}" alt="Class Icon">
-                    <strong>Pemain ${i + 1}:</strong>
-                    <input type="text" id="player-name-${i}" placeholder="Masukkan Nama">
+                    <strong>Player ${i + 1}:</strong>
+                    <input type="text" id="player-name-${i}" placeholder="Enter Name">
                     <select id="player-class-${i}">
                         ${classOptionsHTML}
                     </select>
@@ -72,10 +82,12 @@ export class Game {
         const count = parseInt(this.playerCountInput.value, 10);
         for (let i = 0; i < count; i++) {
             const classSelect = document.getElementById(`player-class-${i}`);
-            const iconImg = document.getElementById(`class-icon-${i}`);
-            classSelect.addEventListener('change', (event) => {
-                iconImg.src = CHARACTER_CLASSES[event.target.value].icon;
-            });
+            if (classSelect) {
+                const iconImg = document.getElementById(`class-icon-${i}`);
+                classSelect.addEventListener('change', (event) => {
+                    iconImg.src = CHARACTER_CLASSES[event.target.value].icon;
+                });
+            }
         }
     }
 
@@ -89,6 +101,7 @@ export class Game {
             const player = new Player(name, classData, i);
             this.players.push(player);
         }
+
         if (this.players.length > 0) {
             this.setupContainer.style.display = 'none';
             this.gameContainer.style.display = 'flex';
@@ -109,21 +122,29 @@ export class Game {
     createBoard() {
         const gameBoard = document.getElementById('game-board');
         gameBoard.innerHTML = '';
-        for (let i = 0; i < 64; i++) {
-            const cell = document.createElement('div');
-            if (this.tilePath.includes(i)) {
-                cell.classList.add('tile');
-                cell.dataset.tileId = i;
-            }
-            gameBoard.appendChild(cell);
-        }
-        const centerPanelHTML = `
-            <div id="center-panel">
-                <div id="game-log-container"><div id="game-log"></div></div>
-                <div id="dice-display">🎲</div>
-                <button id="roll-dice-btn" class="btn">ROLL DICE!</button>
-            </div>`;
-        gameBoard.insertAdjacentHTML('beforeend', centerPanelHTML);
+
+        // Buat petak-petak yang ada di jalur
+        this.tilePath.forEach((tileIndex) => {
+            const tile = document.createElement('div');
+            tile.classList.add('tile');
+            tile.dataset.tileId = tileIndex;
+            const row = Math.floor(tileIndex / 8) + 1;
+            const col = (tileIndex % 8) + 1;
+            tile.style.gridRow = `${row} / ${row + 1}`;
+            tile.style.gridColumn = `${col} / ${col + 1}`;
+            gameBoard.appendChild(tile);
+        });
+
+        // Buat panel tengah
+        const centerPanel = document.createElement('div');
+        centerPanel.id = 'center-panel';
+        centerPanel.innerHTML = `
+            <div id="dice-display">🎲</div>
+            <button id="roll-dice-btn" class="btn">ROLL DICE!</button>
+        `;
+        gameBoard.appendChild(centerPanel);
+
+        // Re-assign elemen UI dan pasang event listener setelah dibuat
         this.ui.reassignCenterPanelElements();
         this.ui.rollDiceBtn.addEventListener('click', () => this.handleRollDice());
     }
@@ -149,19 +170,25 @@ export class Game {
         const steps = Math.floor(Math.random() * 6) + 1;
         this.ui.updateDiceDisplay(steps);
         const currentPlayer = this.getCurrentPlayer();
-        this.ui.addLog(`${currentPlayer.name} rolled a: ${steps}.`);
+        this.ui.addLog(`${currentPlayer.name} melempar dadu: ${steps}.`);
         this.movePlayer(currentPlayer, steps);
     }
     
     movePlayer(player, steps) {
         player.move(steps);
+
         if (player.position >= this.tilePath.length) {
-            player.position %= this.tilePath.length;
-            this.ui.addLog(`${player.name} passed the start!`);
+            player.position %= this.tilePath.length; // Kembali ke awal jika melewati batas
+            this.ui.addLog(`${player.name} melewati start!`);
         }
+
         this.updatePlayerPosition(player);
-        this.checkTileEvent(player);
-        this.nextTurn();
+        this.checkTileEvent(player); // Cek event setelah bergerak
+        
+        // Pindah ke giliran berikutnya setelah jeda singkat agar notifikasi terbaca
+        setTimeout(() => {
+            this.nextTurn();
+        }, 500);
     }
 
     updatePlayerPosition(player) {
@@ -172,10 +199,12 @@ export class Game {
 
     checkTileEvent(player) {
         const visualTileId = this.tilePath[player.position];
-        if (visualTileId === 15 || visualTileId === 48) { 
-            this.ui.addLog(`Treasure! ${player.name} Found 20 Gold.`);
+        // Contoh event, sesuaikan tileId dengan tilePath Anda
+        // Petak ke-15 (index 14) di tilePath adalah tile visual ke-63
+        if (visualTileId === 63) { 
+            this.ui.addLog(`Harta karun! ${player.name} menemukan 20 Emas.`);
             player.addGold(20);
-            this.ui.updatePlayerStats(player);
+            this.ui.updatePlayerStats(player); // Update tampilan stats
         }
     }
 }

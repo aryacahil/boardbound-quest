@@ -3,15 +3,16 @@ export class UI {
         this.gameBoard = document.getElementById('game-board');
         this.leftPanel = document.getElementById('left-info-panel');
         this.rightPanel = document.getElementById('right-info-panel');
+        this.toastContainer = document.getElementById('toast-container');
         this.reassignCenterPanelElements();
     }
 
     reassignCenterPanelElements() {
-        this.gameLog = document.getElementById('game-log');
         this.diceDisplay = document.getElementById('dice-display');
         this.rollDiceBtn = document.getElementById('roll-dice-btn');
     }
 
+    // PERUBAHAN: Layout panel pemain dibuat selang-seling
     createPlayerInfoPanels(players) {
         this.leftPanel.innerHTML = '';
         this.rightPanel.innerHTML = '';
@@ -23,22 +24,21 @@ export class UI {
                     <p><strong>Class:</strong> ${player.class}</p>
                     <p><strong>HP:</strong> <span id="hp-${index}">${player.hp}</span></p>
                     <p><strong>Posisi:</strong> <span id="pos-${index}">${player.position + 1}</span></p>
-                </div>
-            `;
-            if (index < 2) { 
+                </div>`;
+            
+            // Jika index genap (0, 2, 4...) ke kiri, ganjil (1, 3, 5...) ke kanan
+            if (index % 2 === 0) { 
                 this.leftPanel.innerHTML += panelHTML;
             } else { 
                 this.rightPanel.innerHTML += panelHTML;
             }
         });
     }
-
+    
     updatePlayerStats(player) {
         if(!document.getElementById(`hp-${player.index}`)) return;
-
         document.getElementById(`hp-${player.index}`).textContent = player.hp;
         document.getElementById(`pos-${player.index}`).textContent = player.position + 1;
-        
         document.querySelectorAll('.player-card').forEach(card => card.classList.remove('active'));
         document.getElementById(`player-card-${player.index}`).classList.add('active');
     }
@@ -65,12 +65,20 @@ export class UI {
         const offsetX = (player.index % 2) * 5;
         const offsetY = Math.floor(player.index / 2) * 5;
         
-        pawn.style.top = `${tile.offsetTop + 15 + offsetY}px`;
-        pawn.style.left = `${tile.offsetLeft + 15 + offsetX}px`;
+        pawn.style.top = `${tile.offsetTop + 10 + offsetY}px`;
+        pawn.style.left = `${tile.offsetLeft + 10 + offsetX}px`;
     }
     
+    // PERUBAHAN TOTAL: Menggunakan sistem notifikasi "toast"
     addLog(message) {
-        if (!this.gameLog) return;
-        this.gameLog.innerHTML = `<p>${message}</p>` + this.gameLog.innerHTML;
+        const toast = document.createElement('div');
+        toast.classList.add('toast');
+        toast.innerHTML = message; // innerHTML agar tag <strong> terbaca
+        this.toastContainer.appendChild(toast);
+
+        // Hapus notifikasi setelah animasi selesai (4 detik)
+        setTimeout(() => {
+            toast.remove();
+        }, 4000);
     }
 }
