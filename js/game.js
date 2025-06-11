@@ -2,10 +2,14 @@ import { Player } from './player.js';
 import { UI } from './ui.js';
 
 const CHARACTER_CLASSES = {
-    fighter: { name: "Fighter", hp: 120, attack: 15, color: '#e53935', icon: 'images/fighter.png' },
+    fighter: { name: "Knight", hp: 120, attack: 15, color: '#e53935', icon: 'images/fighter.png' },
     mage: { name: "Mage", hp: 80, attack: 20, color: '#1e88e5', icon: 'images/mage.png' },
-    assassin: { name: "Assassin", hp: 90, attack: 18, color: '#43a047', icon: 'images/assassin.png' },
-    marksman: { name: "Marksman", hp: 100, attack: 12, color: '#fdd835', icon: 'images/marksman.png' }
+    assassin: { name: "Thief", hp: 90, attack: 18, color: '#43a047', icon: 'images/assassin.png' },
+    marksman: { name: "Archer", hp: 100, attack: 12, color: '#fdd835', icon: 'images/marksman.png' },
+    druid: { name: "Druid", hp: 110, attack: 14, color: '#00897b', icon: 'images/druid.png' },
+    dragon: { name: "Dragon", hp: 150, attack: 18, color: '#d84315', icon: 'images/dragon.png' },
+    barbarian: { name: "Barbarian", hp: 100, attack: 22, color: '#795548', icon: 'images/barbarian.png' },
+    alchemist: { name: "Alchemist", hp: 85, attack: 10, color: '#8e24aa', icon: 'images/alchemy.png' }
 };
 
 export class Game {
@@ -109,7 +113,7 @@ export class Game {
             <div id="center-panel">
                 <div id="game-log-container"><div id="game-log"></div></div>
                 <div id="dice-display">🎲</div>
-                <button id="roll-dice-btn" class="btn">LEMPAR DADU!</button>
+                <button id="roll-dice-btn" class="btn">ROLL DICE!</button>
             </div>`;
         gameBoard.insertAdjacentHTML('beforeend', centerPanelHTML);
         this.ui.reassignCenterPanelElements();
@@ -137,7 +141,7 @@ export class Game {
         const steps = Math.floor(Math.random() * 6) + 1;
         this.ui.updateDiceDisplay(steps);
         const currentPlayer = this.getCurrentPlayer();
-        this.ui.addLog(`${currentPlayer.name} melempar dadu: ${steps}.`);
+        this.ui.addLog(`${currentPlayer.name} rolled a: ${steps}.`);
         this.movePlayer(currentPlayer, steps);
     }
     
@@ -145,7 +149,7 @@ export class Game {
         player.move(steps);
         if (player.position >= this.tilePath.length) {
             player.position %= this.tilePath.length;
-            this.ui.addLog(`${player.name} melewati start!`);
+            this.ui.addLog(`${player.name} passed the start!`);
         }
         this.updatePlayerPosition(player);
         this.checkTileEvent(player);
@@ -161,9 +165,8 @@ export class Game {
 
     checkTileEvent(player) {
         const visualTileId = this.tilePath[player.position];
-        // Event sederhana
-        if (visualTileId === 15 || visualTileId === 48) { // contoh petak harta
-            this.ui.addLog(`Harta karun! ${player.name} menemukan 20 Emas.`);
+        if (visualTileId === 15 || visualTileId === 48) { 
+            this.ui.addLog(`Treasure! ${player.name} Found 20 Gold.`);
             player.addGold(20);
             this.ui.updatePlayerStats(player);
         }
