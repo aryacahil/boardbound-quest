@@ -42,19 +42,24 @@ export class Game {
     generatePlayerForms() {
         const count = parseInt(this.playerCountInput.value, 10);
         this.playerFormsContainer.innerHTML = '';
+
+        let classOptionsHTML = '';
+        for (const classKey in CHARACTER_CLASSES) {
+            classOptionsHTML += `<option value="${classKey}">${CHARACTER_CLASSES[classKey].name}</option>`;
+        }
+
         for (let i = 0; i < count; i++) {
+            const defaultClass = 'knight';
             const formHTML = `
                 <div class="player-form">
-                    <img id="class-icon-${i}" class="class-icon" src="${CHARACTER_CLASSES['fighter'].icon}" alt="Class Icon">
+                    <img id="class-icon-${i}" class="class-icon" src="${CHARACTER_CLASSES[defaultClass].icon}" alt="Class Icon">
                     <strong>Pemain ${i + 1}:</strong>
-                    <input type="text" id="player-name-${i}" placeholder="Masukkan Nama">
+                    <input type="text" id="player-name-${i}" placeholder="Insert Your Name">
                     <select id="player-class-${i}">
-                        <option value="fighter">Fighter</option>
-                        <option value="mage">Mage</option>
-                        <option value="assassin">Assassin</option>
-                        <option value="marksman">Marksman</option>
+                        ${classOptionsHTML} 
                     </select>
-                </div>`;
+                </div>
+            `;
             this.playerFormsContainer.innerHTML += formHTML;
         }
         this.attachFormEventListeners();
@@ -141,7 +146,7 @@ export class Game {
         const steps = Math.floor(Math.random() * 6) + 1;
         this.ui.updateDiceDisplay(steps);
         const currentPlayer = this.getCurrentPlayer();
-        this.ui.addLog(`${currentPlayer.name} rolled a: ${steps}.`);
+        this.ui.addLog(`${currentPlayer.name} Rolled A: ${steps}.`);
         this.movePlayer(currentPlayer, steps);
     }
     
@@ -149,7 +154,7 @@ export class Game {
         player.move(steps);
         if (player.position >= this.tilePath.length) {
             player.position %= this.tilePath.length;
-            this.ui.addLog(`${player.name} passed the start!`);
+            this.ui.addLog(`${player.name} Passed The Start!`);
         }
         this.updatePlayerPosition(player);
         this.checkTileEvent(player);
@@ -160,7 +165,6 @@ export class Game {
         const visualTileId = this.tilePath[player.position];
         this.ui.renderPlayerPosition(player, visualTileId);
         this.ui.updatePlayerStats(player);
-
     }
 
     checkTileEvent(player) {

@@ -1,6 +1,6 @@
 export class Player {
     constructor(name, classData, index) {
-        this.name = name || `Pemain ${index + 1}`;
+        this.name = name || `Player ${index + 1}`;
         this.class = classData.name;
         this.hp = classData.hp;
         this.attack = classData.attack;
