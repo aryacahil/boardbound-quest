@@ -10,7 +10,7 @@ const CHARACTER_CLASSES = {
     druid: { name: "Druid", hp: 110, attack: 14, color: '#00897b', icon: 'images/druid.png' },
     dragon: { name: "Dragon", hp: 150, attack: 18, color: '#d84315', icon: 'images/dragon.png' },
     barbarian: { name: "Barbarian", hp: 100, attack: 22, color: '#795548', icon: 'images/barbarian.png' },
-    alchemist: { name: "Alchemist", hp: 85, attack: 10, color: '#8e24aa', icon: 'images/alchemist.png' }
+    alchemist: { name: "Alchemist", hp: 85, attack: 10, color: '#8e24aa', icon: 'images/alchemy.png' }
 };
 
 export class Game {

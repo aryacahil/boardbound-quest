@@ -1,3 +1,5 @@
+// File: js/player.js (Versi Final yang Sudah Diperbaiki)
+
 export class Player {
     constructor(name, classData, index) {
         this.name = name || `Player ${index + 1}`;
@@ -5,8 +7,12 @@ export class Player {
         this.hp = classData.hp;
         this.attack = classData.attack;
         this.color = classData.color;
+        
+        // --- PERBAIKAN DI SINI ---
+        // Kita sekarang menyimpan path ikon ke dalam objek pemain
+        this.icon = classData.icon; 
 
-        this.position = 0;
+        this.position = 0; // Index di dalam array tilePath
         this.gold = 0;
         this.index = index;
     }

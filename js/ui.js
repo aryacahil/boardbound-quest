@@ -1,3 +1,5 @@
+// File: js/ui.js (Versi Final dengan Ikon & Nama di Pion)
+
 export class UI {
     constructor() {
         this.gameBoard = document.getElementById('game-board');
@@ -12,31 +14,27 @@ export class UI {
         this.rollDiceBtn = document.getElementById('roll-dice-btn');
     }
 
-    // PERUBAHAN: Layout panel pemain dibuat selang-seling
     createPlayerInfoPanels(players) {
         this.leftPanel.innerHTML = '';
         this.rightPanel.innerHTML = '';
-
         players.forEach((player, index) => {
             const panelHTML = `
                 <div class="player-card" id="player-card-${index}">
-                    <h3 style="color:${player.color};">${player.name}</h3>
+                    <h3 style="color:${player.color};">${player.name || `Player ${index + 1}`}</h3>
                     <p><strong>Class:</strong> ${player.class}</p>
                     <p><strong>HP:</strong> <span id="hp-${index}">${player.hp}</span></p>
-                    <p><strong>Posisi:</strong> <span id="pos-${index}">${player.position + 1}</span></p>
+                    <p><strong>Position:</strong> <span id="pos-${index}">${player.position + 1}</span></p>
                 </div>`;
-            
-            // Jika index genap (0, 2, 4...) ke kiri, ganjil (1, 3, 5...) ke kanan
-            if (index % 2 === 0) { 
+            if (index % 2 === 0) {
                 this.leftPanel.innerHTML += panelHTML;
-            } else { 
+            } else {
                 this.rightPanel.innerHTML += panelHTML;
             }
         });
     }
-    
+
     updatePlayerStats(player) {
-        if(!document.getElementById(`hp-${player.index}`)) return;
+        if (!document.getElementById(`hp-${player.index}`)) return;
         document.getElementById(`hp-${player.index}`).textContent = player.hp;
         document.getElementById(`pos-${player.index}`).textContent = player.position + 1;
         document.querySelectorAll('.player-card').forEach(card => card.classList.remove('active'));
@@ -47,13 +45,22 @@ export class UI {
         if (!this.diceDisplay) return;
         this.diceDisplay.textContent = number;
     }
-    
+
+    // --- PERUBAHAN UTAMA DI SINI ---
     createPlayerPawn(player) {
         const pawn = document.createElement('div');
         pawn.classList.add('player-pawn');
         pawn.id = `player-${player.index}`;
-        pawn.style.backgroundColor = player.color;
-        pawn.textContent = player.index + 1;
+        
+        // Menggunakan warna pemain sebagai border dan gambar ikon sebagai background
+        pawn.style.borderColor = player.color;
+        pawn.style.backgroundImage = `url('${player.icon}')`;
+
+        const nameTag = document.createElement('span');
+        nameTag.classList.add('pawn-name');
+        nameTag.textContent = player.name || `P${player.index + 1}`;
+        pawn.appendChild(nameTag);
+
         this.gameBoard.appendChild(pawn);
     }
 
@@ -61,22 +68,19 @@ export class UI {
         const pawn = document.getElementById(`player-${player.index}`);
         const tile = document.querySelector(`[data-tile-id='${visualTileId}']`);
         if (!pawn || !tile) return;
-        
-        const offsetX = (player.index % 2) * 5;
-        const offsetY = Math.floor(player.index / 2) * 5;
-        
-        pawn.style.top = `${tile.offsetTop + 10 + offsetY}px`;
-        pawn.style.left = `${tile.offsetLeft + 10 + offsetX}px`;
+
+        const offsetX = (player.index % 2) * 20;
+        const offsetY = Math.floor(player.index / 2) * 10;
+
+        pawn.style.top = `${tile.offsetTop + 5 + offsetY}px`;
+        pawn.style.left = `${tile.offsetLeft + 5 + offsetX}px`;
     }
-    
-    // PERUBAHAN TOTAL: Menggunakan sistem notifikasi "toast"
+
     addLog(message) {
         const toast = document.createElement('div');
         toast.classList.add('toast');
-        toast.innerHTML = message; // innerHTML agar tag <strong> terbaca
+        toast.innerHTML = message;
         this.toastContainer.appendChild(toast);
-
-        // Hapus notifikasi setelah animasi selesai (4 detik)
         setTimeout(() => {
             toast.remove();
         }, 4000);
