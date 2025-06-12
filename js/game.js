@@ -145,6 +145,7 @@ export class Game {
         const centerPanel = document.createElement('div');
         centerPanel.id = 'center-panel';
         centerPanel.innerHTML = `
+            <div id="game-log" class="game-log"></div>
             <div id="dice-display">🎲</div>
             <button id="roll-dice-btn" class="btn">ROLL DICE!</button>`;
         gameBoard.appendChild(centerPanel);

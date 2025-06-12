@@ -206,13 +206,11 @@ body {
     position: relative;
 }
 
-/* --- PERBAIKAN DI SINI --- */
 .tile {
     border: 2px solid #9fb5ff;
     border-radius: 8px;
     background-color: #eef2ff;
     position: relative;
-    /* 3 baris ini akan menengahkan ikon di dalam petak */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -220,7 +218,7 @@ body {
 .tile:nth-child(even){ background-color: #dbe2ff; }
 
 .tile-image-icon {
-    width: 60%; /* Ukuran ikon disesuaikan agar lebih pas */
+    width: 60%; 
     height: 60%;
     object-fit: contain;
     opacity: 0.8;
@@ -244,6 +242,18 @@ body {
     gap: 30px;
 }
 
+#game-log {
+  min-height: 2em;
+  font-size: 1.4rem;
+  color: #3f517e;
+  background-color: rgba(255,255,255,0.8);
+  border-radius: 8px;
+  padding: 5px 10px;
+  text-align: center;
+  margin-bottom: 10px;
+  width: 90%;
+}
+
 #dice-display {
     width: 100px;
     height: 100px;
@@ -261,7 +271,6 @@ body {
     width: 80%;
 }
 
-/* Ganti .player-pawn yang lama dengan ini */
 .player-pawn {
     width: 60px;
     height: 60px;

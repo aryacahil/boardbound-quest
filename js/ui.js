@@ -1,5 +1,3 @@
-// File: js/ui.js (Versi Final dengan Ikon & Nama di Pion)
-
 export class UI {
     constructor() {
         this.gameBoard = document.getElementById('game-board');
@@ -77,12 +75,13 @@ export class UI {
     }
 
     addLog(message) {
-        const toast = document.createElement('div');
-        toast.classList.add('toast');
-        toast.innerHTML = message;
-        this.toastContainer.appendChild(toast);
-        setTimeout(() => {
-            toast.remove();
-        }, 4000);
+        const logDiv = document.getElementById('game-log');
+        if (!logDiv) return;
+        logDiv.innerHTML = message;
+        clearTimeout(this.logTimeout);
+        this.logTimeout = setTimeout(() => {
+            logDiv.innerHTML = '';
+        }, 3000);
     }
+
 }
