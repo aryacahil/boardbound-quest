@@ -1,4 +1,3 @@
-// File: js/game.js (Versi Final dengan Ikon Gambar di Papan)
 import { Player } from './player.js';
 import { UI } from './ui.js';
 
@@ -15,8 +14,8 @@ const CHARACTER_CLASSES = {
 
 export class Game {
     tilePath = [
-        0, 1, 2, 3, 4, 5, 6, 7, 
-        15, 23, 31, 39, 47, 55, 
+        0, 1, 2, 3, 4, 5, 6, 7,
+        15, 23, 31, 39, 47, 55,
         63, 62, 61, 60, 59, 58, 57, 56,
         48, 40, 32, 24, 16, 8
     ];
@@ -27,7 +26,6 @@ export class Game {
         this.currentPlayerIndex = 0;
         this.isGameOver = false;
 
-        // PERUBAHAN: Data tile spesial sekarang menggunakan path gambar
         this.specialTiles = {
             0: { type: 'start', iconPath: 'images/start.png' },
             5: { type: 'quest', iconPath: 'images/quest.png' },
@@ -114,7 +112,6 @@ export class Game {
         this.startTurn();
     }
 
-    // PERUBAHAN: Membuat elemen <img> untuk ikon petak
     createBoard() {
         const gameBoard = document.getElementById('game-board');
         gameBoard.innerHTML = '';
@@ -127,8 +124,7 @@ export class Game {
             if (this.specialTiles[tileIndex]) {
                 const special = this.specialTiles[tileIndex];
                 tile.classList.add(`tile-${special.type}`);
-                
-                // Buat elemen gambar, bukan teks/emoji
+
                 const iconImg = document.createElement('img');
                 iconImg.src = special.iconPath;
                 iconImg.classList.add('tile-image-icon');
@@ -153,14 +149,14 @@ export class Game {
         this.ui.reassignCenterPanelElements();
         this.ui.rollDiceBtn.addEventListener('click', () => this.handleRollDice());
     }
-    
+
     startTurn() {
         if (this.isGameOver) return;
         const currentPlayer = this.getCurrentPlayer();
         this.ui.updatePlayerStats(currentPlayer);
         this.ui.addLog(`--- Giliran <strong>${currentPlayer.name}</strong> ---`);
     }
-    
+
     nextTurn() {
         this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
         this.startTurn();
@@ -178,20 +174,24 @@ export class Game {
         this.ui.addLog(`${currentPlayer.name} melempar dadu: ${steps}.`);
         this.movePlayer(currentPlayer, steps);
     }
-    
-    movePlayer(player, steps) {
-        player.move(steps);
-        if (player.position >= this.tilePath.length) {
-            player.position %= this.tilePath.length;
-            this.ui.addLog(`${player.name} melewati start!`);
+
+    async movePlayer(player, steps) {
+        for (let i = 0; i < steps; i++) {
+            player.move(1);
+            if (player.position >= this.tilePath.length) {
+                player.position %= this.tilePath.length;
+                this.ui.addLog(`${player.name} melewati start!`);
+            }
+
+            this.updatePlayerPosition(player);
+            await new Promise(resolve => setTimeout(resolve, 400)); // Delay 400ms per langkah
         }
-        this.updatePlayerPosition(player);
-        setTimeout(() => {
-            this.checkTileEvent(player);
-        }, 100); 
-        setTimeout(() => {
-            this.nextTurn();
-        }, 500);
+
+        await new Promise(resolve => setTimeout(resolve, 300));
+        this.checkTileEvent(player);
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+        this.nextTurn();
     }
 
     updatePlayerPosition(player) {
